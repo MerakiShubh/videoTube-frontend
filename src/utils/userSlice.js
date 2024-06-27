@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Cookies from "js-cookie";
+
+const initialState = {
+  userInfo: null,
+  accessToken: Cookies.get("accessToken") || null,
+};
 
 const userSlice = createSlice({
   name: "user",
-  initialState: {
-    userInfo: null,
-    accessToken: null,
-  },
-
+  initialState,
   reducers: {
     setUserInfo: (state, action) => {
       state.userInfo = action.payload.userInfo;
@@ -15,6 +17,8 @@ const userSlice = createSlice({
     clearUserInfo: (state) => {
       state.userInfo = null;
       state.accessToken = null;
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
     },
   },
 });
