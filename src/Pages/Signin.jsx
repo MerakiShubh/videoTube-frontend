@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../HTTP/api";
 import { Loader, User } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../utils/userSlice";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -97,6 +99,7 @@ const SpinLoader = styled(Loader)`
   }
 `;
 const SignIn = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
@@ -104,6 +107,8 @@ const SignIn = () => {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (response) => {
+      const { user: userInfo, accessToken } = response.data.data;
+      dispatch(setUserInfo({ userInfo, accessToken }));
       navigate("/");
     },
   });
@@ -130,7 +135,7 @@ const SignIn = () => {
         <Title>Sign in</Title>
         {mutation.isError ? (
           <span>
-            <User /> <Error>Account is already exists</Error>
+            <User /> <Error>Username or password is wrong</Error>
           </span>
         ) : (
           <SubTitle>to continue to VideoTube</SubTitle>
