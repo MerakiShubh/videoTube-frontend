@@ -28,6 +28,9 @@ const Home = () => {
   } = useQuery({
     queryKey: ["videos"],
     queryFn: fetchVideos,
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
   if (isLoading) {
     return (
