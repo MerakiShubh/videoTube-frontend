@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { register } from "../HTTP/api";
 import { Loader, User } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../utils/userSlice";
 
 const Container = styled.div`
   display: flex;
@@ -116,6 +118,7 @@ const SpinLoader = styled(Loader)`
 `;
 
 const SignUP = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [avatarLabel, setAvatarLabel] = useState("avatar");
   const [coverImageLabel, setCoverImageLabel] = useState("coverImage");
@@ -128,6 +131,10 @@ const SignUP = () => {
   const mutation = useMutation({
     mutationFn: register,
     onSuccess(response) {
+      // const { userInfo } = response.data.data.createdUser;
+      // const { accessToken } = response.data.data.accessToken;
+      const { createdUser, accessToken } = response.data.data;
+      dispatch(setUserInfo({ userInfo: createdUser, accessToken }));
       navigate("/");
     },
   });
