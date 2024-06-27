@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import VideoCallOutlinedIcon from "@mui/icons-material/VideoCallOutlined";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -79,6 +80,7 @@ const Navbar = () => {
         </Search>
         {userInfo ? (
           <User>
+            <VideoCallOutlinedIcon />
             <Avatar src={userInfo.avatar} alt="User Avatar" />
             {userInfo.username}
           </User>

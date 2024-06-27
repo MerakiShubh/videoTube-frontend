@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { format } from "timeago.js";
 const Container = styled.div`
   width: ${(props) => props.type !== "sm" && "360px"};
   margin-bottom: ${(props) => (props.type === "sm" ? "10px" : "45px")};
@@ -49,18 +50,18 @@ const Info = styled.div`
   font-size: 14px;
   color: ${({ theme }) => theme.textSoft};
 `;
-const Card = ({ video, type }) => {
+const Card = ({ video }) => {
   return (
     <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
-      <Container type={type}>
-        <Image type={type} src={video.thumbnail} />
-        <Details type={type}>
-          <ChannelImage type={type} src={video.ownerInfo.avatar} />
+      <Container>
+        <Image src={video.thumbnail} />
+        <Details>
+          <ChannelImage src={video.ownerInfo.avatar} />
           <Texts>
             <Title>{video.title}</Title>
             <ChannelName>{video.ownerInfo.fullName}</ChannelName>
             <Info>
-              {video.views} views • {new Date(video.createdAt).toDateString()}
+              {video.views} views • {format(video.createdAt)}
             </Info>
           </Texts>
         </Details>
@@ -81,7 +82,6 @@ Card.propTypes = {
     views: PropTypes.number.isRequired,
     createdAt: PropTypes.string.isRequired,
   }).isRequired,
-  type: PropTypes.string,
 };
 
 export default Card;
