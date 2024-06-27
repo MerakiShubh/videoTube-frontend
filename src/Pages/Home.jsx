@@ -29,7 +29,6 @@ const Home = () => {
     queryKey: ["videos"],
     queryFn: fetchVideos,
   });
-
   if (isLoading) {
     return (
       <div>

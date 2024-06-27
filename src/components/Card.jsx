@@ -1,7 +1,6 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-
+import PropTypes from "prop-types";
 const Container = styled.div`
   width: ${(props) => props.type !== "sm" && "360px"};
   margin-bottom: ${(props) => (props.type === "sm" ? "10px" : "45px")};
@@ -50,7 +49,6 @@ const Info = styled.div`
   font-size: 14px;
   color: ${({ theme }) => theme.textSoft};
 `;
-
 const Card = ({ video, type }) => {
   return (
     <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
@@ -69,6 +67,21 @@ const Card = ({ video, type }) => {
       </Container>
     </Link>
   );
+};
+
+Card.propTypes = {
+  video: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    thumbnail: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    ownerInfo: PropTypes.shape({
+      avatar: PropTypes.string.isRequired,
+      fullName: PropTypes.string.isRequired,
+    }).isRequired,
+    views: PropTypes.number.isRequired,
+    createdAt: PropTypes.string.isRequired,
+  }).isRequired,
+  type: PropTypes.string,
 };
 
 export default Card;

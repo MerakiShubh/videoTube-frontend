@@ -19,6 +19,7 @@
     "axios": "^1.7.2",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.396.0",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.2",
