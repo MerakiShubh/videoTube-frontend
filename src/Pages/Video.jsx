@@ -1,11 +1,16 @@
-import React from "react";
 import styled from "styled-components";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import Comments from "../components/Comments";
-import Card from "../components/Card";
+// import Card from "../components/Card";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { fetchVideosById } from "../HTTP/api";
+import { Loader } from "lucide-react";
+import { format } from "timeago.js";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
   display: flex;
@@ -53,9 +58,9 @@ const Hr = styled.hr`
   border: 0.5px solid ${({ theme }) => theme.soft};
 `;
 
-const Recommendation = styled.div`
-  flex: 2;
-`;
+// const Recommendation = styled.div`
+//   flex: 2;
+// `;
 const Channel = styled.div`
   display: flex;
   justify-content: space-between;
@@ -110,24 +115,60 @@ const StyledIframe = styled.iframe`
   border: none;
 `;
 
+const SpinLoader = styled(Loader)`
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const Video = () => {
+  const { videoId } = useParams();
+  const videoOwnerInfo = useSelector((state) => state.video.videoOwnerInfo);
+  const {
+    data: video,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["video", videoId],
+    queryFn: () => fetchVideosById(videoId),
+    enabled: !!videoId,
+  });
+
+  if (isLoading) {
+    return (
+      <div>
+        <SpinLoader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>Some Error occurred: {error.message}</div>;
+  }
+
   return (
     <Container>
       <Content>
         <VideoWrapper>
-          <StyledIframe // Changed iframe to StyledIframe
-            src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
-            title="YouTube video player"
+          <StyledIframe
+            src={video.videoFile}
+            title={video.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen // Changed allowfullscreen to allowFullScreen
+            allowFullScreen
           ></StyledIframe>
         </VideoWrapper>
-        <Title>Test Video</Title>
+        <Title>{video.title}</Title>
         <Details>
-          <Info>7,948,154 views • Jun 22, 2022</Info>
+          <Info>
+            {video.views} views • {format(video.createdAt)}{" "}
+          </Info>
           <Buttons>
             <Button>
-              <ThumbUpOutlinedIcon /> 123
+              <ThumbUpOutlinedIcon /> Like
             </Button>
             <Button>
               <ThumbDownOffAltOutlinedIcon /> Dislike
@@ -143,16 +184,11 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src="https://yt3.ggpht.com/yti/APfAmoE-Q0ZLJ4vk3vqmV4Kwp0sbrjxLyB8Q4ZgNsiRH=s88-c-k-c0x00ffffff-no-rj-mo" />
+            <Image src={videoOwnerInfo.avatar} />
             <ChannelDetail>
-              <ChannelName>Lama Dev</ChannelName>
+              <ChannelName>{videoOwnerInfo?.fullName}</ChannelName>
               <ChannelCounter>200K subscribers</ChannelCounter>
-              <Description>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Doloribus laborum delectus unde quaerat dolore culpa sit aliquam
-                at. Vitae facere ipsum totam ratione exercitationem. Suscipit
-                animi accusantium dolores ipsam ut.
-              </Description>
+              <Description>{video.description}</Description>
             </ChannelDetail>
           </ChannelInfo>
           <Subscribe>SUBSCRIBE</Subscribe>
@@ -160,7 +196,7 @@ const Video = () => {
         <Hr />
         <Comments />
       </Content>
-      <Recommendation>
+      {/* <Recommendation>
         <Card type="sm" />
         <Card type="sm" />
         <Card type="sm" />
@@ -174,7 +210,7 @@ const Video = () => {
         <Card type="sm" />
         <Card type="sm" />
         <Card type="sm" />
-      </Recommendation>
+      </Recommendation> */}
     </Container>
   );
 };

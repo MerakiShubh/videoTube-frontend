@@ -32,6 +32,7 @@ const Home = () => {
     cacheTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
+  // console.log("Here is videos", videos);
   if (isLoading) {
     return (
       <div>

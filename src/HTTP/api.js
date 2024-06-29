@@ -61,3 +61,9 @@ export const fetchVideos = async () => {
   });
   return response.data.result.videos;
 };
+
+export const fetchVideosById = async (videoId) => {
+  const response = await api.get(`/api/v1/videos/${videoId}`);
+  console.log("here is response", response);
+  return response.data.data;
+};

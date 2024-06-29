@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { format } from "timeago.js";
+import { useDispatch } from "react-redux";
+import { setVideoOwnerInfo } from "../utils/videoSlice";
 const Container = styled.div`
   width: ${(props) => props.type !== "sm" && "360px"};
   margin-bottom: ${(props) => (props.type === "sm" ? "10px" : "45px")};
@@ -51,6 +53,10 @@ const Info = styled.div`
   color: ${({ theme }) => theme.textSoft};
 `;
 const Card = ({ video }) => {
+  console.log("Video data in Card component:", video);
+  const dispatch = useDispatch();
+  const data = dispatch(setVideoOwnerInfo(video.ownerInfo));
+  console.log("dispatch data", data);
   return (
     <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
       <Container>
