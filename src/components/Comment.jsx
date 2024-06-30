@@ -1,10 +1,18 @@
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import { deleteComment, updateComment } from "../HTTP/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteCommentRedux, updateCommentRedux } from "../utils/commentSlice";
+import { format } from "timeago.js";
+import { useDispatch, useSelector } from "react-redux";
+import { MoreVertical } from "lucide-react";
+import PropTypes from "prop-types";
 
 const Container = styled.div`
   display: flex;
   gap: 10px;
   margin: 30px 0px;
+  position: relative;
 `;
 
 const Avatar = styled.img`
@@ -19,6 +27,7 @@ const Details = styled.div`
   gap: 10px;
   color: ${({ theme }) => theme.text};
 `;
+
 const Name = styled.span`
   font-size: 13px;
   font-weight: 500;
@@ -35,23 +44,156 @@ const Text = styled.span`
   font-size: 14px;
 `;
 
-const Comment = () => {
+const EditInput = styled.input`
+  border: none;
+  border-bottom: 1px solid ${({ theme }) => theme.soft};
+  color: ${({ theme }) => theme.text};
+  background-color: transparent;
+  outline: none;
+  padding: 5px;
+  width: 100%;
+`;
+
+const ActionMenu = styled.div`
+  position: absolute;
+  top: 25px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.bgLighter};
+  border: 1px solid ${({ theme }) => theme.soft};
+  border-radius: 5px;
+  padding: 5px;
+`;
+
+const ActionButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  text-align: left;
+  width: 100%;
+  color: ${({ theme }) => theme.text};
+`;
+
+const MoreButton = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  color: ${({ theme }) => theme.text};
+  padding: 5px;
+  z-index: 1;
+`;
+
+const Comment = ({ comment, videoId }) => {
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedComment, setEditedComment] = useState(comment.content);
+  const [showMenu, setShowMenu] = useState(false);
+  const user = useSelector((state) => state.user?.userInfo);
+  const isCommentOwner = comment.owner._id === user._id;
+
+  const menuRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
+
+  const updateMutation = useMutation({
+    mutationFn: (updatedContent) => updateComment(comment._id, updatedContent),
+    onSuccess: (data) => {
+      dispatch(updateCommentRedux(data));
+      queryClient.invalidateQueries(["comments", videoId]);
+      setIsEditing(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteComment(comment._id),
+    onSuccess: () => {
+      dispatch(deleteCommentRedux(comment._id));
+      queryClient.invalidateQueries(["comments", videoId]);
+    },
+  });
+
+  const handleEdit = () => {
+    if (isEditing) {
+      updateMutation.mutate(editedComment);
+    } else {
+      setIsEditing(true);
+    }
+  };
+
+  const handleDelete = () => {
+    deleteMutation.mutate();
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleEdit();
+    }
+  };
+
   return (
     <Container>
-      <Avatar src="https://yt3.ggpht.com/yti/APfAmoE-Q0ZLJ4vk3vqmV4Kwp0sbrjxLyB8Q4ZgNsiRH=s88-c-k-c0x00ffffff-no-rj-mo" />
+      <Avatar src={comment.owner.avatar} />
       <Details>
         <Name>
-          John Doe <Date>1 day ago</Date>
+          {comment.owner.username} <Date>{format(comment.createdAt)}</Date>
         </Name>
-        <Text>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel, ex
-          laboriosam ipsam aliquam voluptatem perferendis provident modi, sequi
-          tempore reiciendis quod, optio ullam cumque? Quidem numquam sint
-          mollitia totam reiciendis?
-        </Text>
+        {isEditing ? (
+          <EditInput
+            value={editedComment}
+            onChange={(e) => setEditedComment(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+        ) : (
+          <Text>{comment.content}</Text>
+        )}
       </Details>
+      {isCommentOwner && (
+        <>
+          <MoreButton onClick={() => setShowMenu(!showMenu)}>
+            <MoreVertical size={20} />
+          </MoreButton>
+          {showMenu && (
+            <ActionMenu ref={menuRef}>
+              <ActionButton onClick={handleEdit}>
+                {isEditing ? "Save" : "Edit"}
+              </ActionButton>
+              <ActionButton onClick={handleDelete}>Delete</ActionButton>
+            </ActionMenu>
+          )}
+        </>
+      )}
     </Container>
   );
+};
+
+Comment.propTypes = {
+  comment: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired,
+    owner: PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      avatar: PropTypes.string.isRequired,
+      username: PropTypes.string.isRequired,
+    }).isRequired,
+    createdAt: PropTypes.string.isRequired,
+  }).isRequired,
+  videoId: PropTypes.string.isRequired,
 };
 
 export default Comment;
