@@ -3,7 +3,7 @@ import videoTube from "../img/logo.png";
 import HomeIcon from "@mui/icons-material/Home";
 import ExploreOutlinedIcon from "@mui/icons-material/ExploreOutlined";
 import SubscriptionsOutlinedIcon from "@mui/icons-material/SubscriptionsOutlined";
-import VideoLibraryOutlinedIcon from "@mui/icons-material/VideoLibraryOutlined";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import LibraryMusicOutlinedIcon from "@mui/icons-material/LibraryMusicOutlined";
 import SportsEsportsOutlinedIcon from "@mui/icons-material/SportsEsportsOutlined";
@@ -18,6 +18,7 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import SettingsBrightnessOutlinedIcon from "@mui/icons-material/SettingsBrightnessOutlined";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+
 const Container = styled.div`
   flex: 1;
   background-color: ${({ theme }) => theme.bgLighter};
@@ -27,9 +28,11 @@ const Container = styled.div`
   position: sticky;
   top: 0;
 `;
+
 const Wrapper = styled.div`
   padding: 18px 26px;
 `;
+
 const Logo = styled.div`
   display: flex;
   align-items: center;
@@ -60,6 +63,7 @@ const Hr = styled.hr`
 `;
 
 const Login = styled.div``;
+
 const Button = styled.button`
   padding: 5px 15px;
   background-color: transparent;
@@ -92,33 +96,55 @@ const Menu = ({ darkMode, setDarkMode }) => {
             VideoTube
           </Logo>
         </Link>
-        <Item>
-          <HomeIcon />
-          Home
-        </Item>
-        <Item>
-          <ExploreOutlinedIcon />
-          Explore
-        </Item>
-        <Item>
-          <SubscriptionsOutlinedIcon />
-          Subscriptions
-        </Item>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <HomeIcon />
+            Home
+          </Item>
+        </Link>
+        <Link
+          to="/explore"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Item>
+            <ExploreOutlinedIcon />
+            Explore
+          </Item>
+        </Link>
+        <Link
+          to="/subscriptions"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Item>
+            <SubscriptionsOutlinedIcon />
+            Subscriptions
+          </Item>
+        </Link>
         <Hr />
-        <Item>
-          <VideoLibraryOutlinedIcon />
-          Library
-        </Item>
-        <Item>
-          <HistoryOutlinedIcon />
-          History
-        </Item>
+        <Link
+          to="/likedVideos"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Item>
+            <ThumbUpIcon />
+            Liked Videos
+          </Item>
+        </Link>
+        <Link
+          to="/history"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Item>
+            <HistoryOutlinedIcon />
+            History
+          </Item>
+        </Link>
         <Hr />
         {!userInfo && (
           <>
             <Login>
               Sign in to like videos, comment, and subscribe.
-              <Link to="signin" style={{ textDecoration: "none" }}>
+              <Link to="/signin" style={{ textDecoration: "none" }}>
                 <Button>
                   <AccountCircleOutlinedIcon />
                   SIGN IN
@@ -129,43 +155,64 @@ const Menu = ({ darkMode, setDarkMode }) => {
           </>
         )}
         <Title>BEST OF VIDEOTUBE</Title>
-        <Item>
-          <LibraryMusicOutlinedIcon />
-          Music
-        </Item>
-        <Item>
-          <SportsBasketballOutlinedIcon />
-          Sports
-        </Item>
-        <Item>
-          <SportsEsportsOutlinedIcon />
-          Gaming
-        </Item>
-        <Item>
-          <MovieOutlinedIcon />
-          Movies
-        </Item>
-        <Item>
-          <ArticleOutlinedIcon />
-          News
-        </Item>
-        <Item>
-          <LiveTvOutlinedIcon />
-          Live
-        </Item>
+        <Link to="/music" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <LibraryMusicOutlinedIcon />
+            Music
+          </Item>
+        </Link>
+        <Link to="/sports" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <SportsBasketballOutlinedIcon />
+            Sports
+          </Item>
+        </Link>
+        <Link to="/gaming" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <SportsEsportsOutlinedIcon />
+            Gaming
+          </Item>
+        </Link>
+        <Link to="/movies" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <MovieOutlinedIcon />
+            Movies
+          </Item>
+        </Link>
+        <Link to="/news" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <ArticleOutlinedIcon />
+            News
+          </Item>
+        </Link>
+        <Link to="/live" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <LiveTvOutlinedIcon />
+            Live
+          </Item>
+        </Link>
         <Hr />
-        <Item>
-          <SettingsOutlinedIcon />
-          Settings
-        </Item>
-        <Item>
-          <FlagOutlinedIcon />
-          Report
-        </Item>
-        <Item>
-          <HelpOutlineOutlinedIcon />
-          Help
-        </Item>
+        <Link
+          to="/settings"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <Item>
+            <SettingsOutlinedIcon />
+            Settings
+          </Item>
+        </Link>
+        <Link to="/report" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <FlagOutlinedIcon />
+            Report
+          </Item>
+        </Link>
+        <Link to="/help" style={{ textDecoration: "none", color: "inherit" }}>
+          <Item>
+            <HelpOutlineOutlinedIcon />
+            Help
+          </Item>
+        </Link>
         <Item onClick={() => setDarkMode(!darkMode)}>
           <SettingsBrightnessOutlinedIcon />
           {darkMode ? "Light" : "Dark"} Mode

@@ -102,3 +102,9 @@ export const videoLike = async (videoId) => {
   const response = await api.post(`api/v1/likes/toggle/v/${videoId}`);
   return response;
 };
+
+export const getLikedVideos = async () => {
+  const response = await api.get(`api/v1/likes/videos`);
+  console.log("here is response", response.data.data);
+  return response.data.data;
+};

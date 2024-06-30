@@ -8,6 +8,7 @@ import Home from "./Pages/Home.jsx";
 import Video from "./Pages/Video.jsx";
 import SignIn from "./Pages/Signin.jsx";
 import SignUP from "./Pages/Signup.jsx";
+import LikedVideos from "./components/likedVideos.jsx";
 const Container = styled.div`
   display: flex;
 `;
@@ -38,6 +39,7 @@ function App() {
                   <Route path="video">
                     <Route path=":videoId" element={<Video />} />
                   </Route>
+                  <Route path="likedVideos" element={<LikedVideos />} />
                 </Route>
               </Routes>
             </Wrapper>
