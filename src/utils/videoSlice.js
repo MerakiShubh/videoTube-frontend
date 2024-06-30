@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   videoOwnerInfo: null,
+  videoInfo: null,
 };
-console.log("here is videoownerinfo", initialState.videoOwnerInfo);
 
 const videoSlice = createSlice({
   name: "video",
@@ -15,8 +15,19 @@ const videoSlice = createSlice({
     clearVideoOwnerInfo: (state) => {
       state.videoOwnerInfo = null;
     },
+    setVideoInfo: (state, action) => {
+      state.videoInfo = action.payload;
+    },
+    clearVideoInfo: (state) => {
+      state.videoInfo = null;
+    },
   },
 });
 
-export const { setVideoOwnerInfo, clearVideoOwnerInfo } = videoSlice.actions;
+export const {
+  setVideoOwnerInfo,
+  clearVideoOwnerInfo,
+  setVideoInfo,
+  clearVideoInfo,
+} = videoSlice.actions;
 export default videoSlice.reducer;

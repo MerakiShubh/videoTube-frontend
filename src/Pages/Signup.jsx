@@ -147,7 +147,6 @@ const SignUP = () => {
     const avatar = avatarInputRef.current?.files[0];
     const coverImage = coverImageInputRef.current?.files[0];
     if (!username || !email || !password || !avatar || !coverImage) {
-      console.log("data", { username, email, password, avatar, coverImage });
       return alert("some fields are missing");
     }
     const formData = new FormData();
