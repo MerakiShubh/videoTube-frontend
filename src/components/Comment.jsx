@@ -7,7 +7,7 @@ import { format } from "timeago.js";
 import { useDispatch, useSelector } from "react-redux";
 import { MoreVertical } from "lucide-react";
 import PropTypes from "prop-types";
-
+import { Pencil, Save, Trash2 } from "lucide-react";
 const Container = styled.div`
   display: flex;
   gap: 10px;
@@ -171,9 +171,22 @@ const Comment = ({ comment, videoId }) => {
           {showMenu && (
             <ActionMenu ref={menuRef}>
               <ActionButton onClick={handleEdit}>
-                {isEditing ? "Save" : "Edit"}
+                {isEditing ? (
+                  <span>
+                    <Save /> Save
+                  </span>
+                ) : (
+                  <span>
+                    <Pencil /> Edit
+                  </span>
+                )}
               </ActionButton>
-              <ActionButton onClick={handleDelete}>Delete</ActionButton>
+              <ActionButton onClick={handleDelete}>
+                {" "}
+                <span>
+                  <Trash2 /> Delete
+                </span>{" "}
+              </ActionButton>
             </ActionMenu>
           )}
         </>

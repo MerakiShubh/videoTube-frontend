@@ -97,3 +97,8 @@ export const deleteComment = async (commentId) => {
   const response = await api.delete(`api/v1/comments/c/${commentId}`);
   return response;
 };
+
+export const videoLike = async (videoId) => {
+  const response = await api.post(`api/v1/likes/toggle/v/${videoId}`);
+  return response;
+};

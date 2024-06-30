@@ -4,13 +4,16 @@ import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutl
 import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import Comments from "../components/Comments";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { Tooltip } from "@mui/material";
 // import Card from "../components/Card";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { fetchVideosById } from "../HTTP/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchVideosById, videoLike } from "../HTTP/api";
 import { Loader } from "lucide-react";
 import { format } from "timeago.js";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -125,8 +128,10 @@ const SpinLoader = styled(Loader)`
 `;
 
 const Video = () => {
+  const queryClient = useQueryClient();
   const { videoId } = useParams();
   const videoOwnerInfo = useSelector((state) => state.video.videoOwnerInfo);
+  const [liked, setLiked] = useState(false);
   const {
     data: video,
     isLoading,
@@ -137,6 +142,19 @@ const Video = () => {
     queryFn: () => fetchVideosById(videoId),
     enabled: !!videoId,
   });
+
+  const likeMutation = useMutation({
+    mutationFn: () => videoLike(videoId),
+    onSuccess: () => {
+      setLiked((prevLiked) => !prevLiked);
+      // Refetch the video data to get the updated like count or status
+      queryClient.invalidateQueries(["video", videoId]);
+    },
+  });
+
+  const handleLike = () => {
+    likeMutation.mutate();
+  };
 
   if (isLoading) {
     return (
@@ -167,12 +185,16 @@ const Video = () => {
             {video.views} views • {format(video.createdAt)}{" "}
           </Info>
           <Buttons>
-            <Button>
-              <ThumbUpOutlinedIcon /> Like
+            <Button onClick={handleLike}>
+              {liked ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
+              Like
             </Button>
-            <Button>
-              <ThumbDownOffAltOutlinedIcon /> Dislike
-            </Button>
+            <Tooltip title={liked ? "Dislike disabled" : ""}>
+              <Button disabled={liked}>
+                <ThumbDownOffAltOutlinedIcon />
+                Dislike
+              </Button>
+            </Tooltip>
             <Button>
               <ReplyOutlinedIcon /> Share
             </Button>
