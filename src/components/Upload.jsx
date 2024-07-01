@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { uploadVideo } from "../HTTP/api";
 import PropTypes from "prop-types";
+import { Loader } from "lucide-react"; // Import the Loader icon
 
 const Container = styled.div`
   width: 100%;
@@ -75,7 +76,7 @@ const Desc = styled.textarea`
   padding: 10px;
   background-color: transparent;
   width: 100%;
-  resize: vertical; /* Make the text area resizable */
+  resize: none; /* Make the text area not resizable */
 `;
 
 const Button = styled.button`
@@ -86,12 +87,14 @@ const Button = styled.button`
   cursor: pointer;
   background-color: ${({ theme }) => theme.soft};
   color: ${({ theme }) => theme.textSoft};
-  align-self: center; /* Center the button horizontally */
+  margin: 20px auto 0; /* Center the button horizontally */
+  display: block; /* Ensure the button is block-level for centering */
 `;
 
 const Label = styled.label`
   font-size: 14px;
   margin-bottom: 5px;
+  padding-top: 20px;
 `;
 
 const FormGroup = styled.div`
@@ -100,23 +103,44 @@ const FormGroup = styled.div`
   gap: 10px;
 `;
 
+const SpinLoader = styled(Loader)`
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  width: 40px; /* Adjust size as needed */
+  height: 40px; /* Adjust size as needed */
+  color: ${({ theme }) => theme.text}; /* Set spinner color */
+  position: absolute; /* Ensure it overlays the form */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001; /* Ensure it's above other elements */
+  background-color: transparent; /* Ensure it doesn't block the background */
+  pointer-events: none; /* Allow clicks to pass through */
+`;
+
 const Upload = ({ onClose }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [videoFileLabel, setVideoFileLabel] = useState("Choose file");
-  const [thumbnailLabel, setThumbnailLabel] = useState("Choose file");
+  const [videoFileLabel, setVideoFileLabel] = useState("Upload Video File");
+  const [thumbnailLabel, setThumbnailLabel] = useState("Upload Thumbnail File");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     if (name === "videoFile") {
-      setVideoFileLabel(files[0]?.name || "Choose file");
+      setVideoFileLabel(files[0]?.name || "Upload Video File");
     } else if (name === "thumbnail") {
-      setThumbnailLabel(files[0]?.name || "Choose file");
+      setThumbnailLabel(files[0]?.name || "Upload Thumbnail File");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const videoFile = document.querySelector('input[name="videoFile"]')
       .files[0];
@@ -125,6 +149,7 @@ const Upload = ({ onClose }) => {
 
     if (!videoFile || !thumbnail) {
       alert("Please select both video and thumbnail files.");
+      setIsLoading(false);
       return;
     }
 
@@ -140,11 +165,14 @@ const Upload = ({ onClose }) => {
       onClose(); // Close the upload form after successful upload
     } catch (error) {
       console.error("Error uploading video", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <Container>
+      {isLoading && <SpinLoader />}
       <Wrapper>
         <Close onClick={onClose}>&times;</Close>
         <Title>Upload a New Video</Title>
@@ -184,10 +212,6 @@ const Upload = ({ onClose }) => {
               onChange={(e) => setDescription(e.target.value)}
               required
             />
-          </FormGroup>
-          <FormGroup>
-            <Label>Tags:</Label>
-            <Input type="text" placeholder="Separate the tags with commas." />
           </FormGroup>
           <FormGroup>
             <Label>Thumbnail:</Label>

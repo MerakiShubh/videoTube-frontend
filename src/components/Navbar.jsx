@@ -4,6 +4,8 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import VideoCallOutlinedIcon from "@mui/icons-material/VideoCallOutlined";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import Upload from "./Upload";
 
 const Container = styled.div`
   position: sticky;
@@ -54,6 +56,7 @@ const Button = styled.button`
   align-items: center;
   gap: 5px;
 `;
+
 const User = styled.div`
   display: flex;
   align-items: center;
@@ -70,7 +73,13 @@ const Avatar = styled.img`
 `;
 
 const Navbar = () => {
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
+
+  const handleUploadIconClick = () => {
+    setIsUploadOpen(!isUploadOpen);
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -80,7 +89,7 @@ const Navbar = () => {
         </Search>
         {userInfo ? (
           <User>
-            <VideoCallOutlinedIcon />
+            <VideoCallOutlinedIcon onClick={handleUploadIconClick} />
             <Avatar src={userInfo.avatar} alt="User Avatar" />
             {userInfo.username}
           </User>
@@ -92,6 +101,7 @@ const Navbar = () => {
             </Button>
           </Link>
         )}
+        {isUploadOpen && <Upload onClose={() => setIsUploadOpen(false)} />}
       </Wrapper>
     </Container>
   );

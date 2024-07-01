@@ -74,6 +74,15 @@ export const fetchVideosById = async (videoId) => {
   return response.data.data;
 };
 
+export const uploadVideo = async (data) => {
+  const response = await api.post("/api/v1/videos", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data.data;
+};
+
 export const addComment = async (videoId, content) => {
   const response = await api.post(`api/v1/comments/${videoId}`, { content });
   return response.data.data;
