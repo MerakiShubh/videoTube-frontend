@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { uploadVideo } from "../HTTP/api";
 import PropTypes from "prop-types";
-import { Loader } from "lucide-react"; // Import the Loader icon
+import { Loader } from "lucide-react";
 
 const Container = styled.div`
   width: 100%;
@@ -87,8 +87,8 @@ const Button = styled.button`
   cursor: pointer;
   background-color: ${({ theme }) => theme.soft};
   color: ${({ theme }) => theme.textSoft};
-  margin: 20px auto 0; /* Center the button horizontally */
-  display: block; /* Ensure the button is block-level for centering */
+  margin: 20px auto 0;
+  display: block;
 `;
 
 const Label = styled.label`
@@ -103,6 +103,19 @@ const FormGroup = styled.div`
   gap: 10px;
 `;
 
+const Spindiv = styled.div`
+  width: 40px;
+  height: 40px;
+  color: ${({ theme }) => theme.text};
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  background-color: transparent;
+  pointer-events: none;
+`;
+
 const SpinLoader = styled(Loader)`
   animation: spin 1s linear infinite;
   @keyframes spin {
@@ -110,16 +123,6 @@ const SpinLoader = styled(Loader)`
       transform: rotate(360deg);
     }
   }
-  width: 40px; /* Adjust size as needed */
-  height: 40px; /* Adjust size as needed */
-  color: ${({ theme }) => theme.text}; /* Set spinner color */
-  position: absolute; /* Ensure it overlays the form */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1001; /* Ensure it's above other elements */
-  background-color: transparent; /* Ensure it doesn't block the background */
-  pointer-events: none; /* Allow clicks to pass through */
 `;
 
 const Upload = ({ onClose }) => {
@@ -172,7 +175,12 @@ const Upload = ({ onClose }) => {
 
   return (
     <Container>
-      {isLoading && <SpinLoader />}
+      {isLoading && (
+        <Spindiv>
+          {" "}
+          <SpinLoader />
+        </Spindiv>
+      )}
       <Wrapper>
         <Close onClick={onClose}>&times;</Close>
         <Title>Upload a New Video</Title>

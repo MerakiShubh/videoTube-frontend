@@ -10,9 +10,10 @@ import PropTypes from "prop-types";
 import { Pencil, Save, Trash2 } from "lucide-react";
 const Container = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 5px;
   margin: 30px 0px;
   position: relative;
+  padding-right: 40px;
 `;
 
 const Avatar = styled.img`
@@ -57,13 +58,15 @@ const EditInput = styled.input`
 const ActionMenu = styled.div`
   position: absolute;
   top: 25px;
-  right: 0;
+  right: 5px; /* Adjusted to prevent overlap */
   display: flex;
   flex-direction: column;
+  gap: 0px;
   background: ${({ theme }) => theme.bgLighter};
   border: 1px solid ${({ theme }) => theme.soft};
   border-radius: 5px;
   padding: 5px;
+  z-index: 10; /* Ensure the action menu appears in front */
 `;
 
 const ActionButton = styled.button`
@@ -74,12 +77,17 @@ const ActionButton = styled.button`
   text-align: left;
   width: 100%;
   color: ${({ theme }) => theme.text};
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  line-height: 1;
 `;
 
 const MoreButton = styled.div`
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 25px;
+  right: -25px;
   cursor: pointer;
   color: ${({ theme }) => theme.text};
   padding: 5px;
@@ -173,19 +181,18 @@ const Comment = ({ comment, videoId }) => {
               <ActionButton onClick={handleEdit}>
                 {isEditing ? (
                   <span>
-                    <Save /> Save
+                    <Save size={16} /> Save
                   </span>
                 ) : (
                   <span>
-                    <Pencil /> Edit
+                    <Pencil size={16} /> Edit
                   </span>
                 )}
               </ActionButton>
               <ActionButton onClick={handleDelete}>
-                {" "}
                 <span>
-                  <Trash2 /> Delete
-                </span>{" "}
+                  <Trash2 size={16} /> Delete
+                </span>
               </ActionButton>
             </ActionMenu>
           )}
