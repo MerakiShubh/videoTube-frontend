@@ -122,3 +122,8 @@ export const getLikedVideos = async () => {
   console.log("here is response", response.data.data);
   return response.data.data;
 };
+
+export const incrementViewCount = async (videoId) => {
+  const response = await api.post(`/api/v1/videos/increment-views/${videoId}`);
+  return response.data;
+};

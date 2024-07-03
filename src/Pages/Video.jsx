@@ -9,11 +9,11 @@ import { Tooltip } from "@mui/material";
 // import Card from "../components/Card";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchVideosById, videoLike } from "../HTTP/api";
+import { fetchVideosById, incrementViewCount, videoLike } from "../HTTP/api";
 import { Loader } from "lucide-react";
 import { format } from "timeago.js";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -132,6 +132,8 @@ const Video = () => {
   const { videoId } = useParams();
   const videoOwnerInfo = useSelector((state) => state.video.videoOwnerInfo);
   const [liked, setLiked] = useState(false);
+  const [localViews, setLocalViews] = useState(0);
+
   const {
     data: video,
     isLoading,
@@ -141,7 +143,22 @@ const Video = () => {
     queryKey: ["video", videoId],
     queryFn: () => fetchVideosById(videoId),
     enabled: !!videoId,
+    onSuccess: (data) => {
+      setLocalViews(data.views);
+    },
   });
+
+  useEffect(() => {
+    if (videoId) {
+      incrementViewCount(videoId)
+        .then(() => {
+          setLocalViews((prevViews) => prevViews + 1);
+        })
+        .catch((error) => {
+          console.error("Failed to increment view count", error);
+        });
+    }
+  }, [videoId]);
 
   const likeMutation = useMutation({
     mutationFn: () => videoLike(videoId),
@@ -182,7 +199,7 @@ const Video = () => {
         <Title>{video.title}</Title>
         <Details>
           <Info>
-            {video.views} views • {format(video.createdAt)}{" "}
+            {localViews} views • {format(video.createdAt)} ;
           </Info>
           <Buttons>
             <Button onClick={handleLike}>
