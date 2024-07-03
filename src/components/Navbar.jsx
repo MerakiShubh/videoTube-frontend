@@ -2,10 +2,11 @@ import styled from "styled-components";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import VideoCallOutlinedIcon from "@mui/icons-material/VideoCallOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import Upload from "./Upload";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Container = styled.div`
   position: sticky;
@@ -75,6 +76,20 @@ const Avatar = styled.img`
 const Navbar = () => {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const userInfo = useSelector((state) => state.user.userInfo);
+  const [searchQuery, setSearchQuery] = useState("");
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    queryClient.invalidateQueries(["videos"], {
+      refetchInactive: true,
+    });
+    queryClient.setQueryData(["videos"], (oldData) => ({
+      ...oldData,
+      searchQuery, // Store the search query in cache
+    }));
+    navigate(`/?query=${searchQuery}`); // Adjust navigation as needed
+  };
 
   const handleUploadIconClick = () => {
     setIsUploadOpen(!isUploadOpen);
@@ -84,8 +99,13 @@ const Navbar = () => {
     <Container>
       <Wrapper>
         <Search>
-          <Input placeholder="Search" />
-          <SearchOutlinedIcon />
+          <Input
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+          <SearchOutlinedIcon onClick={handleSearch} />
         </Search>
         {userInfo ? (
           <User>

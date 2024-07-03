@@ -62,10 +62,8 @@ export const register = async (formData) =>
   api.post("/api/v1/users/register", formData);
 
 export const login = async (data) => api.post("/api/v1/users/login", data);
-export const fetchVideos = async () => {
-  const response = await api.get("/api/v1/videos", {
-    params: { page: 1, limit: 10 },
-  });
+export const fetchVideos = async (params = {}) => {
+  const response = await api.get("/api/v1/videos", { params });
   return response.data.result.videos;
 };
 

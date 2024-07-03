@@ -3,6 +3,7 @@ import Card from "../components/Card";
 import { useQuery } from "@tanstack/react-query";
 import { fetchVideos } from "../HTTP/api";
 import { Loader } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -20,18 +21,21 @@ const SpinLoader = styled(Loader)`
 `;
 
 const Home = () => {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query") || "";
   const {
     isLoading,
     isError,
     data: videos,
     error,
   } = useQuery({
-    queryKey: ["videos"],
-    queryFn: fetchVideos,
+    queryKey: ["videos", query],
+    queryFn: () => fetchVideos({ query }),
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,
   });
+
   if (isLoading) {
     return (
       <div>
