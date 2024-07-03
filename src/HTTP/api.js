@@ -62,6 +62,7 @@ export const register = async (formData) =>
   api.post("/api/v1/users/register", formData);
 
 export const login = async (data) => api.post("/api/v1/users/login", data);
+
 export const fetchVideos = async (params = {}) => {
   const response = await api.get("/api/v1/videos", { params });
   return response.data.result.videos;
@@ -69,6 +70,12 @@ export const fetchVideos = async (params = {}) => {
 
 export const fetchVideosById = async (videoId) => {
   const response = await api.get(`/api/v1/videos/${videoId}`);
+  return response.data.data;
+};
+
+export const fetchVideosByCategory = async (tag) => {
+  const response = await api.get(`api/v1/videos/tag/${tag}`);
+  console.log("here is the response for category videos", response.data.data);
   return response.data.data;
 };
 

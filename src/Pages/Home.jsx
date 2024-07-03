@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import Card from "../components/Card";
 import { useQuery } from "@tanstack/react-query";
-import { fetchVideos } from "../HTTP/api";
+import { fetchVideos, fetchVideosByCategory } from "../HTTP/api";
 import { Loader } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -22,6 +22,7 @@ const SpinLoader = styled(Loader)`
 
 const Home = () => {
   const [searchParams] = useSearchParams();
+  const { category } = useParams();
   const query = searchParams.get("query") || "";
   const {
     isLoading,
@@ -29,8 +30,9 @@ const Home = () => {
     data: videos,
     error,
   } = useQuery({
-    queryKey: ["videos", query],
-    queryFn: () => fetchVideos({ query }),
+    queryKey: ["videos", query, category],
+    queryFn: () =>
+      category ? fetchVideosByCategory(category) : fetchVideos({ query }),
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
     refetchOnWindowFocus: true,

@@ -33,12 +33,10 @@ function App() {
               <Routes>
                 <Route path="/">
                   <Route index element={<Home />} />
+                  <Route path="/category/:category" element={<Home />} />
                   <Route path="signin" element={<SignIn />} />
                   <Route path="signup" element={<SignUP />} />
-
-                  <Route path="video">
-                    <Route path=":videoId" element={<Video />} />
-                  </Route>
+                  <Route path="video/:videoId" element={<Video />} />
                   <Route path="likedVideos" element={<LikedVideos />} />
                 </Route>
               </Routes>

@@ -155,37 +155,55 @@ const Menu = ({ darkMode, setDarkMode }) => {
           </>
         )}
         <Title>BEST OF VIDEOTUBE</Title>
-        <Link to="/music" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/category/Music"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Item>
             <LibraryMusicOutlinedIcon />
             Music
           </Item>
         </Link>
-        <Link to="/sports" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/category/Sports"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Item>
             <SportsBasketballOutlinedIcon />
             Sports
           </Item>
         </Link>
-        <Link to="/gaming" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/category/Gaming"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Item>
             <SportsEsportsOutlinedIcon />
             Gaming
           </Item>
         </Link>
-        <Link to="/movies" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/category/Movies"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Item>
             <MovieOutlinedIcon />
             Movies
           </Item>
         </Link>
-        <Link to="/news" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/category/News"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Item>
             <ArticleOutlinedIcon />
             News
           </Item>
         </Link>
-        <Link to="/live" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link
+          to="/category/Live"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <Item>
             <LiveTvOutlinedIcon />
             Live

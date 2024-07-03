@@ -22,6 +22,7 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.bgLighter};
   color: ${({ theme }) => theme.text};
   padding: 20px;
+  padding-right: 35px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -128,6 +129,7 @@ const SpinLoader = styled(Loader)`
 const Upload = ({ onClose }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
   const [videoFileLabel, setVideoFileLabel] = useState("Upload Video File");
   const [thumbnailLabel, setThumbnailLabel] = useState("Upload Thumbnail File");
   const [isLoading, setIsLoading] = useState(false);
@@ -159,6 +161,7 @@ const Upload = ({ onClose }) => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("tags", tags);
     formData.append("videoFile", videoFile);
     formData.append("thumbnail", thumbnail);
 
@@ -219,6 +222,16 @@ const Upload = ({ onClose }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label>Tag:</Label>
+            <Input
+              placeholder="Tag"
+              name="tag"
+              rows={4}
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
             />
           </FormGroup>
           <FormGroup>
