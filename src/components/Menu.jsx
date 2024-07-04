@@ -18,7 +18,7 @@ import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import SettingsBrightnessOutlinedIcon from "@mui/icons-material/SettingsBrightnessOutlined";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-
+import PropTypes from "prop-types";
 const Container = styled.div`
   flex: 1;
   background-color: ${({ theme }) => theme.bgLighter};
@@ -238,6 +238,11 @@ const Menu = ({ darkMode, setDarkMode }) => {
       </Wrapper>
     </Container>
   );
+};
+
+Menu.propTypes = {
+  darkMode: PropTypes.bool.isRequired,
+  setDarkMode: PropTypes.func.isRequired,
 };
 
 export default Menu;
