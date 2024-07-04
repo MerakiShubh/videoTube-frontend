@@ -9,7 +9,12 @@ import { Tooltip } from "@mui/material";
 // import Card from "../components/Card";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchVideosById, incrementViewCount, videoLike } from "../HTTP/api";
+import {
+  addToWatchHistory,
+  fetchVideosById,
+  incrementViewCount,
+  videoLike,
+} from "../HTTP/api";
 import { Loader } from "lucide-react";
 import { format } from "timeago.js";
 import { useSelector } from "react-redux";
@@ -150,13 +155,17 @@ const Video = () => {
 
   useEffect(() => {
     if (videoId) {
-      incrementViewCount(videoId)
-        .then(() => {
+      const addWatchHistory = async () => {
+        try {
+          await incrementViewCount(videoId);
           setLocalViews((prevViews) => prevViews + 1);
-        })
-        .catch((error) => {
-          console.error("Failed to increment view count", error);
-        });
+          await addToWatchHistory(videoId);
+          console.log("Video added to watch history");
+        } catch (error) {
+          console.error("Failed to update watch history or view count", error);
+        }
+      };
+      addWatchHistory();
     }
   }, [videoId]);
 

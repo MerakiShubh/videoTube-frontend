@@ -127,3 +127,20 @@ export const incrementViewCount = async (videoId) => {
   const response = await api.post(`/api/v1/videos/increment-views/${videoId}`);
   return response.data;
 };
+
+export const fetchWatchHistory = async () => {
+  const response = await api.get(`api/v1/watch-history`);
+  console.log("fetch Watch history data ", response);
+  return response.data.watchHistory;
+};
+
+export const addToWatchHistory = async (videoId) => {
+  try {
+    const response = await api.post(`/api/v1/watch-history/${videoId}`);
+    console.log("Watch history response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to add to watch history", error);
+    throw error;
+  }
+};
