@@ -43,6 +43,8 @@ const Input = styled.input`
   background-color: transparent;
   outline: none;
   color: ${({ theme }) => theme.text};
+  flex: 1;
+  padding: 0 5px;
 `;
 
 const Button = styled.button`
@@ -92,11 +94,13 @@ const Navbar = () => {
   };
 
   const handleUploadIconClick = () => {
-    setIsUploadOpen(!isUploadOpen);
+    setIsUploadOpen(true); // Only set the upload form to open
+    setIsUserInfoOpen(false); // Ensure the user info form is closed
   };
 
   const handleAvatarClick = () => {
     setIsUserInfoOpen(!isUserInfoOpen); // Toggle the User Info Form
+    setIsUploadOpen(false); // Ensure the upload form is closed
   };
 
   return (
@@ -112,9 +116,13 @@ const Navbar = () => {
           <SearchOutlinedIcon onClick={handleSearch} />
         </Search>
         {userInfo ? (
-          <User onClick={handleAvatarClick}>
+          <User>
             <VideoCallOutlinedIcon onClick={handleUploadIconClick} />
-            <Avatar src={userInfo.avatar} alt="User Avatar" />
+            <Avatar
+              src={userInfo.avatar}
+              alt="User Avatar"
+              onClick={handleAvatarClick}
+            />
             {userInfo.username}
           </User>
         ) : (

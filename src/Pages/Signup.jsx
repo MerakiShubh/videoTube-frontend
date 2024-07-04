@@ -1,54 +1,76 @@
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { uploadVideo } from "../HTTP/api";
-import PropTypes from "prop-types";
+import { register } from "../HTTP/api";
+import { Loader, User } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../utils/userSlice";
 
 const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: #000000a7;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Ensure the upload form is on top */
+  height: calc(100vh - 56px);
+  color: ${({ theme }) => theme.text};
 `;
 
 const Wrapper = styled.div`
-  width: 600px;
-  background-color: ${({ theme }) => theme.bgLighter};
-  color: ${({ theme }) => theme.text};
-  padding: 20px;
   display: flex;
+  align-items: center;
   flex-direction: column;
-  gap: 20px;
-  position: relative;
-  border-radius: 10px; /* Rounded corners for a nicer look */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for better visibility */
-`;
-
-const Close = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
-  font-size: 24px;
-  color: ${({ theme }) => theme.text};
+  background-color: ${({ theme }) => theme.bgLighter};
+  border: 1px solid ${({ theme }) => theme.soft};
+  padding: 20px 50px;
+  gap: 10px;
+  width: 320px;
 `;
 
 const Title = styled.h1`
-  text-align: center;
+  font-size: 24px;
+`;
+const Text = styled.h1`
+  font-size: 15px;
+`;
+
+const SubTitle = styled.h2`
+  font-size: 20px;
+  font-weight: 300;
 `;
 
 const Input = styled.input`
   border: 1px solid ${({ theme }) => theme.soft};
-  color: ${({ theme }) => theme.text};
   border-radius: 3px;
   padding: 10px;
   background-color: transparent;
   width: 100%;
+  color: ${({ theme }) => theme.text};
+`;
+
+const Button = styled.button`
+  border-radius: 3px;
+  border: none;
+  padding: 10px 20px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: ${({ theme }) => theme.soft};
+  color: ${({ theme }) => theme.textSoft};
+`;
+
+const More = styled.div`
+  display: flex;
+  margin-top: 10px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.textSoft};
+`;
+
+const Links = styled.div`
+  margin-left: 50px;
+`;
+
+const Tags = styled.span`
+  margin-left: 30px;
 `;
 
 const CustomFileLabel = styled.label`
@@ -67,151 +89,131 @@ const CustomFileLabel = styled.label`
 const HiddenFileInput = styled.input`
   display: none;
 `;
-
-const Desc = styled.textarea`
-  border: 1px solid ${({ theme }) => theme.soft};
-  color: ${({ theme }) => theme.text};
-  border-radius: 3px;
-  padding: 10px;
-  background-color: transparent;
-  width: 100%;
-  resize: vertical; /* Make the text area resizable */
+const Error = styled.div`
+  font-size: 20px;
+  font-weight: 300;
+  color: red;
 `;
 
-const Button = styled.button`
-  border-radius: 3px;
-  border: none;
+const SignIn = styled.div`
   padding: 10px 20px;
+  background-color: transparent;
+  border: 1px solid #3ea6ff;
+  color: #3ea6ff;
+  border-radius: 3px;
   font-weight: 500;
   cursor: pointer;
-  background-color: ${({ theme }) => theme.soft};
-  color: ${({ theme }) => theme.textSoft};
-  align-self: center; /* Center the button horizontally */
-`;
-
-const Label = styled.label`
-  font-size: 14px;
-  margin-bottom: 5px;
-`;
-
-const FormGroup = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  gap: 5px;
 `;
 
-const Upload = ({ onClose }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [videoFileLabel, setVideoFileLabel] = useState("Choose file");
-  const [thumbnailLabel, setThumbnailLabel] = useState("Choose file");
-
-  const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (name === "videoFile") {
-      setVideoFileLabel(files[0]?.name || "Choose file");
-    } else if (name === "thumbnail") {
-      setThumbnailLabel(files[0]?.name || "Choose file");
+const SpinLoader = styled(Loader)`
+  animation: spin 1s linear infinite;
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
     }
-  };
+  }
+`;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const SignUP = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [avatarLabel, setAvatarLabel] = useState("avatar");
+  const [coverImageLabel, setCoverImageLabel] = useState("coverImage");
+  const fullNameRef = useRef(null);
+  const usernameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const avatarInputRef = useRef(null);
+  const coverImageInputRef = useRef(null);
+  const mutation = useMutation({
+    mutationFn: register,
+    onSuccess(response) {
+      // const { userInfo } = response.data.data.createdUser;
+      // const { accessToken } = response.data.data.accessToken;
+      const { createdUser, accessToken } = response.data.data;
+      dispatch(setUserInfo({ userInfo: createdUser, accessToken }));
+      navigate("/");
+    },
+  });
 
-    const videoFile = document.querySelector('input[name="videoFile"]')
-      .files[0];
-    const thumbnail = document.querySelector('input[name="thumbnail"]')
-      .files[0];
-
-    if (!videoFile || !thumbnail) {
-      alert("Please select both video and thumbnail files.");
-      return;
+  const handleRegisterSubmit = () => {
+    const fullName = fullNameRef.current?.value;
+    const username = usernameRef.current?.value;
+    const email = emailRef.current?.value;
+    const password = passwordRef.current?.value;
+    const avatar = avatarInputRef.current?.files[0];
+    const coverImage = coverImageInputRef.current?.files[0];
+    if (!username || !email || !password || !avatar || !coverImage) {
+      return alert("some fields are missing");
     }
-
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("videoFile", videoFile);
-    formData.append("thumbnail", thumbnail);
-
-    try {
-      const response = await uploadVideo(formData);
-      console.log("Video uploaded successfully", response);
-      onClose(); // Close the upload form after successful upload
-    } catch (error) {
-      console.error("Error uploading video", error);
-    }
+    formData.append("fullName", fullName);
+    formData.append("username", username);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("avatar", avatar);
+    formData.append("coverImage", coverImage);
+    mutation.mutate(formData);
   };
-
   return (
     <Container>
       <Wrapper>
-        <Close onClick={onClose}>&times;</Close>
-        <Title>Upload a New Video</Title>
-        <form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label>Video:</Label>
-            <CustomFileLabel htmlFor="videoFile">
-              {videoFileLabel}
-            </CustomFileLabel>
-            <HiddenFileInput
-              id="videoFile"
-              type="file"
-              accept="video/*"
-              name="videoFile"
-              onChange={handleFileChange}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Title:</Label>
-            <Input
-              type="text"
-              placeholder="Title"
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Description:</Label>
-            <Desc
-              placeholder="Description"
-              name="description"
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Tags:</Label>
-            <Input type="text" placeholder="Separate the tags with commas." />
-          </FormGroup>
-          <FormGroup>
-            <Label>Thumbnail:</Label>
-            <CustomFileLabel htmlFor="thumbnail">
-              {thumbnailLabel}
-            </CustomFileLabel>
-            <HiddenFileInput
-              id="thumbnail"
-              type="file"
-              accept="image/*"
-              name="thumbnail"
-              onChange={handleFileChange}
-              required
-            />
-          </FormGroup>
-          <Button type="submit">Upload</Button>
-        </form>
+        <Title>Sign up</Title>
+        {mutation.isError ? (
+          <span>
+            <User /> <Error>Account is already exists</Error>
+          </span>
+        ) : (
+          <SubTitle>to continue to VideoTube</SubTitle>
+        )}
+
+        <Input placeholder="fullname" ref={fullNameRef} />
+        <Input placeholder="username" ref={usernameRef} />
+        <Input placeholder="email" ref={emailRef} />
+        <Input type="password" placeholder="password" ref={passwordRef} />
+
+        <CustomFileLabel htmlFor="avatar">{avatarLabel}</CustomFileLabel>
+        <HiddenFileInput
+          id="avatar"
+          type="file"
+          ref={avatarInputRef}
+          onChange={(e) => setAvatarLabel(e.target.files[0]?.name)}
+        />
+
+        <CustomFileLabel htmlFor="coverImage">
+          {coverImageLabel}
+        </CustomFileLabel>
+        <HiddenFileInput
+          id="coverImage"
+          type="file"
+          ref={coverImageInputRef}
+          onChange={(e) => setCoverImageLabel(e.target.files[0]?.name)}
+        />
+        {mutation.isPending ? (
+          <SpinLoader />
+        ) : (
+          <Button type="submit" onClick={handleRegisterSubmit}>
+            Sign up
+          </Button>
+        )}
+        <Text>Already have an account</Text>
+        <Link to={"/signin"} style={{ textDecoration: "none" }}>
+          <SignIn>Signin</SignIn>
+        </Link>
       </Wrapper>
+      <More>
+        English(USA)
+        <Links>
+          <Tags>Help</Tags>
+          <Tags>Privacy</Tags>
+          <Tags>Terms</Tags>
+        </Links>
+      </More>
     </Container>
   );
 };
 
-Upload.propTypes = {
-  onClose: PropTypes.func.isRequired,
-};
-
-export default Upload;
+export default SignUP;
