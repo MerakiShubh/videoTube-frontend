@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import Upload from "./Upload";
 import { useQueryClient } from "@tanstack/react-query";
-
+import UserInfoForm from "../Pages/UserInfoForm";
 const Container = styled.div`
   position: sticky;
   top: 0;
@@ -79,7 +79,7 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
+  const [isUserInfoOpen, setIsUserInfoOpen] = useState(false);
   const handleSearch = () => {
     queryClient.invalidateQueries(["videos"], {
       refetchInactive: true,
@@ -95,6 +95,10 @@ const Navbar = () => {
     setIsUploadOpen(!isUploadOpen);
   };
 
+  const handleAvatarClick = () => {
+    setIsUserInfoOpen(!isUserInfoOpen); // Toggle the User Info Form
+  };
+
   return (
     <Container>
       <Wrapper>
@@ -108,7 +112,7 @@ const Navbar = () => {
           <SearchOutlinedIcon onClick={handleSearch} />
         </Search>
         {userInfo ? (
-          <User>
+          <User onClick={handleAvatarClick}>
             <VideoCallOutlinedIcon onClick={handleUploadIconClick} />
             <Avatar src={userInfo.avatar} alt="User Avatar" />
             {userInfo.username}
@@ -122,6 +126,9 @@ const Navbar = () => {
           </Link>
         )}
         {isUploadOpen && <Upload onClose={() => setIsUploadOpen(false)} />}
+        {isUserInfoOpen && (
+          <UserInfoForm onClose={() => setIsUserInfoOpen(false)} />
+        )}
       </Wrapper>
     </Container>
   );
