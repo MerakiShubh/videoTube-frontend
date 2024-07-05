@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import Card from "../components/Card";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchVideos, fetchVideosByCategory } from "../HTTP/api";
 import { Loader } from "lucide-react";
 import { useParams, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 
 const Container = styled.div`
   display: flex;
@@ -24,19 +26,35 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const { category } = useParams();
   const query = searchParams.get("query") || "";
+
   const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading,
     isError,
-    data: videos,
     error,
-  } = useQuery({
-    queryKey: ["videos", query, category],
-    queryFn: () =>
-      category ? fetchVideosByCategory(category) : fetchVideos({ query }),
+  } = useInfiniteQuery({
+    queryKey: ["videos", { query, category }],
+    queryFn: ({ pageParam = 1 }) =>
+      category
+        ? fetchVideosByCategory({ category, page: pageParam })
+        : fetchVideos({ query, page: pageParam }),
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.length ? pages.length + 1 : undefined;
+    },
     staleTime: 5 * 60 * 1000,
     cacheTime: 10 * 60 * 1000,
-    refetchOnWindowFocus: true,
   });
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
 
   if (isLoading) {
     return (
@@ -52,9 +70,11 @@ const Home = () => {
 
   return (
     <Container>
-      {videos.map((video) => (
-        <Card key={video._id} video={video} />
-      ))}
+      {data.pages.map((page) =>
+        page.map((video) => <Card key={video._id} video={video} />)
+      )}
+      <div ref={ref} />
+      {isFetchingNextPage && <SpinLoader />}
     </Container>
   );
 };

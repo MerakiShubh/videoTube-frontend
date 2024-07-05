@@ -63,8 +63,10 @@ export const register = async (formData) =>
 
 export const login = async (data) => api.post("/api/v1/users/login", data);
 
-export const fetchVideos = async (params = {}) => {
-  const response = await api.get("/api/v1/videos", { params });
+export const fetchVideos = async ({ query, page }) => {
+  const response = await api.get("/api/v1/videos", {
+    params: { query, page },
+  });
   return response.data.result.videos;
 };
 
@@ -75,7 +77,6 @@ export const fetchVideosById = async (videoId) => {
 
 export const fetchVideosByCategory = async (tag) => {
   const response = await api.get(`api/v1/videos/tag/${tag}`);
-  console.log("here is the response for category videos", response.data.data);
   return response.data.data;
 };
 
@@ -130,14 +131,12 @@ export const incrementViewCount = async (videoId) => {
 
 export const fetchWatchHistory = async () => {
   const response = await api.get(`api/v1/watch-history`);
-  console.log("fetch Watch history data ", response);
   return response.data.watchHistory;
 };
 
 export const addToWatchHistory = async (videoId) => {
   try {
     const response = await api.post(`/api/v1/watch-history/${videoId}`);
-    console.log("Watch history response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Failed to add to watch history", error);
