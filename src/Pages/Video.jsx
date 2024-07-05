@@ -160,7 +160,6 @@ const Video = () => {
           await incrementViewCount(videoId);
           setLocalViews((prevViews) => prevViews + 1);
           await addToWatchHistory(videoId);
-          console.log("Video added to watch history");
         } catch (error) {
           console.error("Failed to update watch history or view count", error);
         }

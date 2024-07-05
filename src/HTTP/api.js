@@ -120,7 +120,6 @@ export const videoLike = async (videoId) => {
 
 export const getLikedVideos = async () => {
   const response = await api.get(`api/v1/likes/videos`);
-  console.log("here is response", response.data.data);
   return response.data.data;
 };
 

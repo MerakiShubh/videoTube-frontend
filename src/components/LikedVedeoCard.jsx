@@ -56,7 +56,6 @@ const Info = styled.div`
 
 const LikedVideoCard = ({ video }) => {
   const dispatch = useDispatch();
-  console.log("video data", video);
 
   const handleClick = () => {
     dispatch(setVideoOwnerInfo(video.ownerInfo));
