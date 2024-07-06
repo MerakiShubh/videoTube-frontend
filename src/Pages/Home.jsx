@@ -26,7 +26,6 @@ const Home = () => {
   const [searchParams] = useSearchParams();
   const { category } = useParams();
   const query = searchParams.get("query") || "";
-
   const {
     data,
     fetchNextPage,
@@ -39,7 +38,7 @@ const Home = () => {
     queryKey: ["videos", { query, category }],
     queryFn: ({ pageParam = 1 }) =>
       category
-        ? fetchVideosByCategory({ category, page: pageParam })
+        ? fetchVideosByCategory(category, pageParam)
         : fetchVideos({ query, page: pageParam }),
     getNextPageParam: (lastPage, pages) => {
       return lastPage.length ? pages.length + 1 : undefined;
@@ -64,15 +63,23 @@ const Home = () => {
     );
   }
 
+  const deduplicatedVideos = data?.pages.reduce((acc, page) => {
+    page.forEach((video) => {
+      if (!acc.some((v) => v._id === video._id)) {
+        acc.push(video);
+      }
+    });
+    return acc;
+  }, []);
+
   if (isError) {
     return <div>Some Error occurred: {error.message}</div>;
   }
-
   return (
     <Container>
-      {data.pages.map((page) =>
-        page.map((video) => <Card key={video._id} video={video} />)
-      )}
+      {deduplicatedVideos.map((video) => (
+        <Card key={video._id} video={video} />
+      ))}
       <div ref={ref} />
       {isFetchingNextPage && <SpinLoader />}
     </Container>

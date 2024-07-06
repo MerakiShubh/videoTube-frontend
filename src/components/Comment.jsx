@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MoreVertical } from "lucide-react";
 import PropTypes from "prop-types";
 import { Pencil, Save, Trash2 } from "lucide-react";
+
 const Container = styled.div`
   display: flex;
   gap: 5px;
@@ -98,10 +99,10 @@ const Comment = ({ comment, videoId }) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedComment, setEditedComment] = useState(comment.content);
+  const [editedComment, setEditedComment] = useState(comment?.content);
   const [showMenu, setShowMenu] = useState(false);
-  const user = useSelector((state) => state.user?.userInfo);
-  const isCommentOwner = comment.owner._id === user._id;
+  const user = useSelector((state) => state.user?.userInfo) || {};
+  const isCommentOwner = comment?.owner?._id === user._id;
 
   const menuRef = useRef();
 
@@ -152,6 +153,10 @@ const Comment = ({ comment, videoId }) => {
       handleEdit();
     }
   };
+
+  if (!comment) {
+    return <div>Loading comment...</div>;
+  }
 
   return (
     <Container>

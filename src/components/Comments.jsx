@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { addComment, fetchComments } from "../HTTP/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // Import the icon
+
 const Container = styled.div``;
 
 const NewComment = styled.div`
@@ -13,10 +15,27 @@ const NewComment = styled.div`
   gap: 10px;
 `;
 
-const Avatar = styled.img`
+const StyledAvatarWrapper = styled.div`
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* Ensure child content respects border radius */
+  background-color: ${({ theme }) => theme.soft}; /* Fallback background */
+
+  & > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  & > svg {
+    width: 100%;
+    height: 100%;
+    color: ${({ theme }) => theme.text}; /* Match theme text color */
+  }
 `;
 
 const Input = styled.input`
@@ -45,7 +64,7 @@ const CancelButton = styled.button`
   cursor: pointer;
   border: none;
   padding: 10px 20px;
-  border-radius: 10;
+  border-radius: 10px;
   font-weight: bold;
 `;
 
@@ -79,7 +98,7 @@ const Comments = () => {
     mutationFn: (newCommentContent) => addComment(videoId, newCommentContent),
     onSuccess: (newCommentData) => {
       const newComment = {
-        ...newCommentData, // Ensure new comment contains all the required data
+        ...newCommentData,
         owner: {
           _id: user._id,
           avatar: user.avatar,
@@ -88,25 +107,33 @@ const Comments = () => {
       };
 
       queryClient.setQueryData(["comments", videoId], (oldComments) => {
-        if (!oldComments) return [newComment]; // Handle initial case
-        return [newComment, ...oldComments]; // Prepend the new comment
+        if (!oldComments) return [newComment];
+        return [newComment, ...oldComments];
       });
-      setComment(""); // Clear input after adding comment
+      setComment("");
     },
   });
 
   const handleCommentSubmit = () => {
-    if (comment.trim) {
+    if (comment.trim()) {
       mutation.mutate(comment);
     }
   };
+
   if (isError) {
-    <div>Comment can not be added {error.message}</div>;
+    return <div>Comment can not be added: {error.message}</div>;
   }
+
   return (
     <Container>
       <NewComment>
-        <Avatar src={user.avatar} />
+        <StyledAvatarWrapper>
+          {user && user.avatar ? (
+            <img src={user.avatar} alt="User Avatar" />
+          ) : (
+            <AccountCircleIcon />
+          )}
+        </StyledAvatarWrapper>
         <Input
           placeholder="Add a comment..."
           value={comment}
@@ -117,8 +144,7 @@ const Comments = () => {
       </NewComment>
       {isLoading ? (
         <div>
-          {" "}
-          <SpinLoader />{" "}
+          <SpinLoader />
         </div>
       ) : (
         comments?.map((comment) => (

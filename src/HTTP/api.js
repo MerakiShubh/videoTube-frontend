@@ -75,8 +75,10 @@ export const fetchVideosById = async (videoId) => {
   return response.data.data;
 };
 
-export const fetchVideosByCategory = async (tag) => {
-  const response = await api.get(`api/v1/videos/tag/${tag}`);
+export const fetchVideosByCategory = async (category, page) => {
+  const response = await api.get(`/api/v1/videos/tag/${category}`, {
+    params: { page },
+  });
   return response.data.data;
 };
 
