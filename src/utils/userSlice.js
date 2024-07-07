@@ -13,6 +13,7 @@ const userSlice = createSlice({
     setUserInfo: (state, action) => {
       state.userInfo = action.payload.userInfo;
       state.accessToken = action.payload.accessToken;
+      Cookies.set("accessToken", action.payload.accessToken);
     },
     clearUserInfo: (state) => {
       state.userInfo = null;

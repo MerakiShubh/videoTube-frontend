@@ -2,7 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 axios.defaults.withCredentials = true;
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: import.meta.env.VITE_BASE_URL,
 });
 
 api.interceptors.request.use(
@@ -13,9 +13,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
@@ -24,13 +22,12 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
-        // If refresh token is missing, handle accordingly
         Cookies.remove("accessToken");
-        window.location.href = "/signin"; // Redirect to login or handle appropriately
+        // window.location.href = "/signin";
         return Promise.reject(error);
       }
       try {
@@ -38,17 +35,17 @@ api.interceptors.response.use(
           refreshToken,
         });
         const { accessToken } = data;
-        Cookies.set("accessToken", accessToken, { secure: false }); // Set secure to false for local development
-
-        // Update headers
+        Cookies.set("accessToken", accessToken, {
+          secure: import.meta.env.VITE_NODE_ENV === "production",
+          sameSite: "None",
+        });
         api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-
         return api(originalRequest);
       } catch (refreshError) {
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
-        window.location.href = "/login"; // Redirect to login or handle appropriately
+        // window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

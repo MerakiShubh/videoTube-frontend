@@ -6,6 +6,8 @@ import { login } from "../HTTP/api";
 import { Loader, User } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../utils/userSlice";
+import Cookies from "js-cookie";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -71,6 +73,7 @@ const Links = styled.div`
 const Tags = styled.span`
   margin-left: 30px;
 `;
+
 const Error = styled.div`
   font-size: 20px;
   font-weight: 300;
@@ -98,16 +101,19 @@ const SpinLoader = styled(Loader)`
     }
   }
 `;
+
 const SignIn = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const usernameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
+
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (response) => {
       const { user: userInfo, accessToken } = response.data.data;
+      Cookies.set("accessToken", accessToken);
       dispatch(setUserInfo({ userInfo, accessToken }));
       navigate("/");
     },
@@ -129,6 +135,7 @@ const SignIn = () => {
     const data = { username, email, password };
     mutation.mutate(data);
   };
+
   return (
     <Container>
       <Wrapper>
@@ -149,7 +156,6 @@ const SignIn = () => {
           <Button onClick={handleSubmit}>Sign in</Button>
         )}
         <Text> Don&apos;t have an account?</Text>
-
         <Link to={"/signup"} style={{ textDecoration: "none" }}>
           <SignUp>Create account</SignUp>
         </Link>

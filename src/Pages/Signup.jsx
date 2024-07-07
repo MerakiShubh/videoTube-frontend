@@ -131,8 +131,6 @@ const SignUP = () => {
   const mutation = useMutation({
     mutationFn: register,
     onSuccess(response) {
-      // const { userInfo } = response.data.data.createdUser;
-      // const { accessToken } = response.data.data.accessToken;
       const { createdUser, accessToken } = response.data.data;
       dispatch(setUserInfo({ userInfo: createdUser, accessToken }));
       navigate("/");
