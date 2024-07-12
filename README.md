@@ -1,8 +1,70 @@
-# React + Vite
+# videoTube Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+videoTube is a comprehensive video platform where users can:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Upload and play videos 📹
+- Like and comment on videos ❤️💬
+- Save liked videos in a special section
+- Track watched videos in your watch history
+- Enjoy optimistic view counting for a smooth experience 📊
+
+## Tech Stack
+
+- **Frontend**: React, Redux, React Query, Axios, Tailwind CSS
+- **Backend**: Node.js, Express, MongoDB, Mongoose ORM
+- **Deployment**: Docker, Nginx, Render
+
+## Features
+
+- Upload and play videos
+- Like and comment on videos
+- Save liked videos
+- Track watched videos
+- Optimistic view counting
+
+## Demo
+
+Watch the demo video for a walkthrough of the project:
+[![Watch the video](https://vimeo.com/982999217?share=copy)
+
+## Live Project
+
+Check out the live project: [Live Project](https://videotube.merakishubh.com)
+
+## Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+- npm
+- Node.js
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/MerakiShubh/videoTube-frontend.git
+   
+2. Install npm pachages
+
+   ```sh
+   npm install
+
+   ```
+
+3. Set up environment variables
+   Copy the .env.sample file to .env and fill in the necessary values.
+
+   ```sh
+   cp .env.sample .env
+
+   ```
+
+4. Start the development server
+   ```sh
+   npm run dev
+   ```
+
