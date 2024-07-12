@@ -27,7 +27,8 @@ videoTube is a comprehensive video platform where users can:
 ## Demo
 
 Watch the demo video for a walkthrough of the project:
-[![Watch the video](https://vimeo.com/982999217?share=copy)
+<iframe src="https://player.vimeo.com/video/982999217" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+
 
 ## Live Project
 
