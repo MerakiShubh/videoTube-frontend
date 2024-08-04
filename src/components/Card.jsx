@@ -67,10 +67,10 @@ const Card = ({ video }) => {
       <Container>
         <Image src={video.thumbnail} />
         <Details>
-          <ChannelImage src={video.ownerInfo.avatar} />
+          <ChannelImage src={video.ownerInfo?.avatar} />
           <Texts>
             <Title>{video.title}</Title>
-            <ChannelName>{video.ownerInfo.fullName}</ChannelName>
+            <ChannelName>{video.ownerInfo?.fullName}</ChannelName>
             <Info>
               {video.views} views • {format(video.createdAt)}
             </Info>
